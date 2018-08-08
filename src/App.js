@@ -1,66 +1,43 @@
 import React, { Component } from 'react';
-import { required, emailCheck } from './validators';
-import formHoc from './formHoc';
-import './App.css';
+import withForm from './withForm';
+import { required } from './validators';
+import Input from './components/Input';
 
 let LoginForm = props => {
-  console.log('formProps: ', props);
   return (
-    <div>
+    <form onSubmit={props.onSubmit}>
       <div>
         {props.valid ? 'valid' : 'invalid'}
       </div>
-      <div>
-        <input
-          id={props.fields.username.id}
-          value={props.fields.username.value}
-          name={props.fields.username.name}
-          onChange={props.fields.username.onChange}
-          onBlur={props.fields.username.onChange}
-        />
-        {props.fields.username.errors.length}
-      </div>
-      <div>
-        <input
-          id={props.fields.password.id}
-          value={props.fields.password.value}
-          name={props.fields.password.name}
-          onChange={props.fields.password.onChange}
-          onBlur={props.fields.password.onChange}
-          type="password"
-        />
-        {props.fields.password.errors.length}
-      </div>
-    </div>
+      <Input {...props.inputs.username} />
+      <Input {...props.inputs.password} />
+      <button>Submit</button>
+    </form>
   )
 };
 
-LoginForm = formHoc(LoginForm, {
-  validators: {
-    username: [
-      required('The username is required'),
-      emailCheck('Please provide a valid email'),
-    ],
-    password: [
-      required('The password is required')
+LoginForm = withForm({
+  username: {
+    name: 'username',
+    placeholder: 'This is a test',
+    validation: [
+      required('Please provide your username'),
     ],
   },
-  fields: {
-    username: '',
-    password: '',
+  password: {
+    name: 'password',
+    type: 'password',
+    validation: [
+      required('Please provide your password'),
+    ],
   },
-});
-
-const Button = () => <button type="submit">Submit</button>
+})(LoginForm);
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <LoginForm
-          footerButtons={Button}
-          onSubmit={() => alert('helz yes!')}
-        />
+        <LoginForm onSubmit={() => alert('helz yes!')} />
       </div>
     );
   }
